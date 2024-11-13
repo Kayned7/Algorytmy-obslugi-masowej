@@ -1,23 +1,25 @@
 class Node:
     def __init__(self, wartosc):
-        self.wartosc = wartosc
-        self.next = None
-        self.prev = None
+        self.wartosc = wartosc  # Wartość przechowywana w węźle
+        self.next = None  # Wskaźnik na następny węzeł
+        self.prev = None  # Wskaźnik na poprzedni węzeł
 
 
 class DLL:
     def __init__(self):
-        self.head = None
-        self.elements = []
-        
+        self.head = None  # Wskaźnik na pierwszy węzeł listy
+        self.elements = []  # Lista pomocnicza do przechowywania wartości węzłów przy wyświetlaniu
+    
     def dodaj(self, wartosc, pozycja):
-        new_node = Node(wartosc)
+        new_node = Node(wartosc)  # Tworzenie nowego węzła z podaną wartością
 
+        # Dodawanie do pustej listy
         if self.head is None:
             self.head = new_node
             print(f"Lista była pusta, dodano element {wartosc} na pozycję 0")
             return
 
+        # Dodawanie nowego węzła na początku listy
         if pozycja == 0:
             new_node.next = self.head
             self.head.prev = new_node
@@ -25,6 +27,7 @@ class DLL:
             print(f"Dodano element {wartosc} na pozycję 0")
             return
 
+        # Dodawanie nowego węzła w określonej pozycji
         current = self.head
         indeks = 0
         while current and indeks < pozycja - 1:
@@ -35,57 +38,67 @@ class DLL:
             print(f"Pozycja {pozycja} jest poza zakresem listy")
         else:
             new_node.next = current.next
+            if current.next:
+                current.next.prev = new_node
             new_node.prev = current
             current.next = new_node
             print(f"Dodano element {wartosc} na pozycję {pozycja}")
 
     def usun(self, pozycja):
-        current = self.head
-        last = None
-        i = 0
-        
+        # Sprawdzanie, czy lista jest pusta
         if not self.head:
             print("Lista jest pusta")
             return
         
-        while i<=pozycja:
-            if i == pozycja:
-                if last is None:
-                    self.head = current.next
-                else:
-                    last.next = current.next
-                    current.prev = last
-                print(f"Element {pozycja} został usunięty z listy")
-                return
-            i+=1
-            last= current
-            current = current.next
+        # Usuwanie pierwszego elementu
+        current = self.head
+        if pozycja == 0:
+            self.head = current.next
+            if self.head:
+                self.head.prev = None
+            print(f"Element na pozycji {pozycja} został usunięty z listy")
+            return
         
-        print(f"Element {pozycja} nie znajduje się na liście")
+        # Przechodzenie do określonej pozycji
+        for i in range(pozycja):
+            current = current.next
+            if current is None:
+                print(f"Pozycja {pozycja} jest poza zakresem listy")
+                return
+
+        # Usuwanie elementu
+        if current.next:
+            current.next.prev = current.prev
+        if current.prev:
+            current.prev.next = current.next
+        print(f"Element na pozycji {pozycja} został usunięty z listy")
 
     def pokaz(self):
-        self.elements = []  
+        # Czyszczenie listy pomocniczej
+        self.elements = []
+        
+        # Sprawdzanie, czy lista jest pusta
         if not self.head:
             print("Lista jest pusta")
         else:
+            # Przechodzenie przez listę i dodawanie wartości węzłów do listy pomocniczej
             current = self.head
-            while True:
+            while current:
                 self.elements.append(current.wartosc)
                 current = current.next
-                if current == self.head:
-                    break
             print("Lista zawiera:", self.elements)
         
     def szukaj(self, wartosc):
+        # Sprawdzanie, czy element o zadanej wartości znajduje się na liście
         if wartosc in self.elements:
             print(f"Element {wartosc} znajduje się na liście")
         else:
             print(f"Element {wartosc} nie znajduje się na liście")
 
 
-
 lista = DLL()
 
+# Pętla główna do obsługi listy, oparta na wejściu użytkownika
 while True:
     a = input(
     """         
@@ -106,10 +119,10 @@ Co chcesz wykonać: """).strip()
     
     elif a == "u":
         try:
-            wartosc = int(input("Podaj wartość do usunięcia: "))
-            lista.usun(wartosc)
+            pozycja = int(input("Podaj pozycję do usunięcia: "))
+            lista.usun(pozycja)
         except ValueError:
-            print("Wartość musi być liczbą całkowitą")
+            print("Pozycja musi być liczbą całkowitą")
     
     elif a == "s":
         try:
